@@ -6,11 +6,11 @@ env:
   AWS_REGION: us-east-1
   NODE_TYPE: t3.medium
   GIT_OWNER: Kirti160598
-  GIT_REPO: EKS_Creation
+  GIT_REPO: flux-with-helm
   NODE_COUNT: 1
   GIT_BRANCH: main
   K8S_VERSION: "1.28"
-  CLUSTER_NAME: Final  # You can make this dynamic too, if needed
+  CLUSTER_NAME: github-eks-cluster  # You can make this dynamic too, if needed
 
 jobs:
   create-eks:
@@ -34,10 +34,23 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
-
       - name: Install Flux CLI
         run: |
           curl -s https://fluxcd.io/install.sh | sudo bash
+          
+      - name: Create EKS Cluster and Namespace
+        run: |
+          eksctl create cluster \
+            --name $CLUSTER_NAME \
+            --version $K8S_VERSION \
+            --region $AWS_REGION \
+            --nodegroup-name standard-workers \
+            --node-type $NODE_TYPE \
+            --nodes $NODE_COUNT \
+            --nodes-min 1 \
+            --nodes-max 1 \
+            --managed
+    
           aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
           kubectl create namespace my-namespace
 
