@@ -5,8 +5,12 @@ on: workflow_dispatch
 env:
   AWS_REGION: us-east-1
   NODE_TYPE: t3.medium
+  GIT_OWNER: Kirti160598
+  GIT_REPO: EKS_Creation
   NODE_COUNT: 1
+  GIT_BRANCH: main
   K8S_VERSION: "1.28"
+  CLUSTER_NAME: github-eks-cluster  # You can make this dynamic too, if needed
 
 jobs:
   create-eks:
@@ -31,6 +35,10 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
+      - name: Install Flux CLI
+        run: |
+          curl -s https://fluxcd.io/install.sh | sudo bash
+
       - name: Create EKS Cluster and Namespace
         run: |
           eksctl create cluster \
@@ -46,3 +54,14 @@ jobs:
 
           aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
           kubectl create namespace my-namespace
+
+      - name: Flux Bootstrap GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.FLUX_GITHUB_TOKEN }}
+        run: |
+          flux bootstrap github \
+            --owner=$GIT_OWNER \
+            --repository=$GIT_REPO \
+            --branch=$GIT_BRANCH \
+            --path=clusters/$CLUSTER_NAME \
+            --personal
