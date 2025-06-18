@@ -10,7 +10,7 @@ env:
   NODE_COUNT: 1
   GIT_BRANCH: main
   K8S_VERSION: "1.28"
-  CLUSTER_NAME: github-eks-cluster  # You can make this dynamic too, if needed
+  CLUSTER_NAME: github-eks-cluster-k  # You can make this dynamic too, if needed
 
 jobs:
   create-eks:
