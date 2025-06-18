@@ -3,7 +3,7 @@ name: Create EKS Cluster
 on: workflow_dispatch
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: ap-south-1
   NODE_TYPE: t3.medium
   GIT_OWNER: Kirti160598
   GIT_REPO: EKS_Creation
