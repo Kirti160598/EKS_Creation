@@ -58,6 +58,5 @@ jobs:
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --path=clusters/staging \
-            --namespace=helm-stag-flux-ns \
-            --personal
+            --path=clusters/staging 
+            
