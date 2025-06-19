@@ -44,7 +44,7 @@ jobs:
 
       - name: Create Namespace
         run: |
-          kubectl create namespace my-namespace1 || echo "Namespace already exists"
+          kubectl create namespace my-namespace-k || echo "Namespace already exists"
 
       - name: Install Flux CLI
         run: |
@@ -58,6 +58,6 @@ jobs:
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --path=clusters/$CLUSTER_NAME \
-            --namespace=my-namespace1 \
+            --path=clusters/staging \
+            --namespace=my-namespace-k \
             --personal
