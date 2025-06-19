@@ -55,10 +55,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.FLUX_GITHUB_TOKEN }}
         run: |
-          flux bootstrap github \
+         flux bootstrap github \
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --namespace=my-namespace-k \
-            --path=clusters/$CLUSTER_NAME
+            --path=clusters/$CLUSTER_NAME \
+            --personal
             
