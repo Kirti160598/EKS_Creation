@@ -44,7 +44,8 @@ jobs:
 
       - name: Create Namespace
         run: |
-          kubectl create namespace my-namespace-k || echo "Namespace already exists"
+          kubectl delete namespace my-namespace-k
+          kubectl create namespace my-namespace-ns || echo "Namespace already exists"
 
       - name: Install Flux CLI
         run: |
