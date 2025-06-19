@@ -34,10 +34,36 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
+
+      - name: Create EKS Cluster
+        run: |
+          eksctl create cluster \
+            --name $CLUSTER_NAME \
+            --version $K8S_VERSION \
+            --region $AWS_REGION \
+            --nodegroup-name standard-workers \
+            --node-type $NODE_TYPE \
+            --nodes $NODE_COUNT \
+            --nodes-min 1 \
+            --nodes-max 1 \
+            --managed
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+      - name: Verify Cluster Access
+        run: |
+          kubectl get nodes
+
+      - name: Create Namespace
+        run: |
+          kubectl create namespace my-namespace || echo "Namespace already exists"
+
       - name: Install Flux CLI
         run: |
           curl -s https://fluxcd.io/install.sh | sudo bash
-          
+
       - name: Flux Bootstrap GitHub
         env:
           GITHUB_TOKEN: ${{ secrets.FLUX_GITHUB_TOKEN }}
@@ -47,4 +73,5 @@ jobs:
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
             --path=clusters/$CLUSTER_NAME \
+            --namespace=my-namespace \
             --personal
