@@ -58,5 +58,6 @@ jobs:
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --path=clusters/staging 
+            --namespace=my-namespace-k \
+            --path=clusters/$CLUSTER_NAME
             
