@@ -60,5 +60,6 @@ jobs:
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
             --path=clusters/$CLUSTER_NAME \
+            --namespace=my-namespace-ns
             --personal
             
