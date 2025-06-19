@@ -35,6 +35,15 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
+      - name: Delete existing EKS cluster (if exists)
+        run: |
+          if aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION >/dev/null 2>&1; then
+            echo "Cluster $CLUSTER_NAME exists. Deleting..."
+            eksctl delete cluster --name $CLUSTER_NAME --region $AWS_REGION
+          else
+            echo "Cluster $CLUSTER_NAME does not exist. Skipping delete."
+          fi
+
       - name: Create EKS Cluster
         run: |
           eksctl create cluster \
