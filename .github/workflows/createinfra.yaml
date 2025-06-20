@@ -100,3 +100,9 @@ jobs:
           echo "Public Node IP: $PUBLIC_IP"
           echo "➡️ You can access the app via: http://$PUBLIC_IP:30080"
           echo "⚠️  Make sure to add this to your /etc/hosts:  $PUBLIC_IP  podinfo.staging"
+
+           # Add entry to /etc/hosts (for curl or internal use inside runner)
+          echo "$PUBLIC_IP podinfo.staging" | sudo tee -a /etc/hosts
+
+          # (Optional) Test with curl inside the runner
+          curl -H "Host: podinfo.staging" http://localhost:30080 || echo "App may not be ready yet"
