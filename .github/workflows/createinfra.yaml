@@ -84,4 +84,4 @@ jobs:
           echo "$PUBLIC_IP podinfo.staging" | sudo tee -a /etc/hosts
 
           # (Optional) Test with curl inside the runner
-          curl -H "Host: podinfo.staging" http://localhost:30080 || echo "App may not be ready yet"
+          curl -H "Host: podinfo.staging" http://$PUBLIC_IP:30080
