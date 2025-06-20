@@ -64,21 +64,26 @@ jobs:
             --namespace=my-namespace-ns \
             --personal
 
-      - name: Port-forward ingress-nginx and test curl
+      - name: Get EKS Worker Node Public IP
         run: |
-          echo "Starting port-forward..."
-          kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 8080:80 &
-          PORT_FORWARD_PID=$!
+          NODE_INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:eks:cluster-name,Values=$CLUSTER_NAME" "Name=instance-state-name,Values=running" \
+            --query "Reservations[*].Instances[*].InstanceId" \
+            --output text)
 
-          # Wait until port is ready
-          for i in {1..10}; do
-            nc -z localhost 8080 && break
-            echo "Waiting for port 8080 to be ready... ($i/10)"
-            sleep 2
-          done
+          PUBLIC_IP=$(aws ec2 describe-instances \
+            --instance-ids $NODE_INSTANCE_ID \
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --output text)
 
-          echo "Running curl to test Ingress..."
-          curl -v -H "Host: podinfo.staging" http://localhost:8080 || echo "Curl failed!"
+          echo "Public Node IP: $PUBLIC_IP"
+          echo "➡️ You can access the app via: http://$PUBLIC_IP:30080"
+          echo "⚠️  Make sure to add this to your /etc/hosts:  $PUBLIC_IP  podinfo.staging"
 
-          echo "Cleaning up..."
-          kill $PORT_FORWARD_PID || true
+           # Add entry to /etc/hosts (for curl or internal use inside runner)
+          echo "$PUBLIC_IP podinfo.staging" | sudo tee -a /etc/hosts
+
+          # (Optional) Test with curl inside the runner
+          curl -H "Host: podinfo.staging" http://$PUBLIC_IP:30080
+
+
