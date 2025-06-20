@@ -72,6 +72,19 @@ jobs:
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --path=clusters/$CLUSTER_NAME \
+            --path=clusters/staging \
             --namespace=my-namespace-ns \
             --personal
+
+      - name: Get EKS Worker Node Public IP
+        run: |
+          NODE_INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:eks:cluster-name,Values=$CLUSTER_NAME" \
+            --query "Reservations[*].Instances[*].InstanceId" --output text)
+
+          PUBLIC_IP=$(aws ec2 describe-instances \
+            --instance-ids $NODE_INSTANCE_ID \
+            --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
+
+          echo "Public Node IP: $PUBLIC_IP"
+          echo "You can access: http://$PUBLIC_IP:30080 with host header 'podinfo.staging'"
