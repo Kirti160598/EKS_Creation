@@ -42,6 +42,7 @@ jobs:
       - name: Verify Cluster Access
         run: |
           kubectl get nodes
+          kubectl get svc
 
       - name: Create Namespace
         run: |
