@@ -59,6 +59,7 @@ jobs:
       - name: Create Namespace
         run: |
           kubectl create namespace my-namespace-ns || echo "Namespace already exists"
+          kubectl create namespace helm-stag-flux-ns || echo "Namespace already exists"
 
       - name: Install Flux CLI
         run: |
@@ -79,12 +80,15 @@ jobs:
       - name: Get EKS Worker Node Public IP
         run: |
           NODE_INSTANCE_ID=$(aws ec2 describe-instances \
-            --filters "Name=tag:eks:cluster-name,Values=$CLUSTER_NAME" \
-            --query "Reservations[*].Instances[*].InstanceId" --output text)
+            --filters "Name=tag:eks:cluster-name,Values=$CLUSTER_NAME" "Name=instance-state-name,Values=running" \
+            --query "Reservations[*].Instances[*].InstanceId" \
+            --output text)
 
           PUBLIC_IP=$(aws ec2 describe-instances \
             --instance-ids $NODE_INSTANCE_ID \
-            --query "Reservations[*].Instances[*].PublicIpAddress" --output text)
+            --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --output text)
 
           echo "Public Node IP: $PUBLIC_IP"
-          echo "You can access: http://$PUBLIC_IP:30080 with host header 'podinfo.staging'"
+          echo "➡️ You can access the app via: http://$PUBLIC_IP:30080"
+          echo "⚠️  Make sure to add this to your /etc/hosts:  $PUBLIC_IP  podinfo.staging"
