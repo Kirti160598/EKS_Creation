@@ -39,15 +39,18 @@ jobs:
         run: |
           aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
-      - name: Verify Cluster Access
-        run: |
-          kubectl get nodes
-          kubectl get svc
-
       - name: Create Namespace
         run: |
           kubectl create namespace my-namespace-ns || echo "Namespace already exists"
           kubectl create namespace helm-stag-flux-ns || echo "Namespace already exists"
+
+      - name: Verify Cluster Access
+        run: |
+          kubectl get nodes
+          kubectl get svc
+          kubectl get pods -n ingress-nginx
+          kubectl get svc -n ingress-nginx
+          kubectl get pods -n my-namespace-ns
 
       - name: Install Flux CLI
         run: |
