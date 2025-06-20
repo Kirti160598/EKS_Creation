@@ -60,7 +60,7 @@ jobs:
             --owner=$GIT_OWNER \
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
-            --path=clusters/$CLUSTER_NAME \
+            --path=clusters/staging \
             --namespace=my-namespace-ns \
             --personal
 
