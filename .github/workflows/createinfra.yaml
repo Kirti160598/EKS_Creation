@@ -34,28 +34,7 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
-      - name: Delete existing EKS cluster (if exists)
-        run: |
-          if aws eks describe-cluster --name github-eks-cluster --region $AWS_REGION >/dev/null 2>&1; then
-            echo "Cluster github-eks-cluster exists. Deleting..."
-            eksctl delete cluster --name github-eks-cluster --region $AWS_REGION
-          else
-            echo "Cluster github-eks-cluster does not exist. Skipping delete."
-          fi
-
-      - name: Create EKS Cluster
-        run: |
-          eksctl create cluster \
-            --name $CLUSTER_NAME \
-            --version $K8S_VERSION \
-            --region $AWS_REGION \
-            --nodegroup-name standard-workers \
-            --node-type $NODE_TYPE \
-            --nodes $NODE_COUNT \
-            --nodes-min 1 \
-            --nodes-max 1 \
-            --managed
-
+    
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
