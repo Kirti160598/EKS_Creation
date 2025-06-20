@@ -61,7 +61,7 @@ jobs:
             --repository=$GIT_REPO \
             --branch=$GIT_BRANCH \
             --path=clusters/$CLUSTER_NAME \
-            --namespace=my-namespace-ns1 \
+            --namespace=my-namespace-ns \
             --personal
 
       - name: Port-forward ingress-nginx and test curl
