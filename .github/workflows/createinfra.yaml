@@ -51,6 +51,8 @@ jobs:
           kubectl get pods -n ingress-nginx
           kubectl get svc -n ingress-nginx
           kubectl get pods -n my-namespace-ns
+          kubectl get deploy -A
+          kubectl get svc -A
 
       - name: Install Flux CLI
         run: |
